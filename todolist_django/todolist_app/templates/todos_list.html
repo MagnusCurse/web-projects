@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #todoInput {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        #todoInput:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        #addButton {
+            padding: 12px 25px;
+            background: #764ba2;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        #addButton:hover {
+            background: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: slideIn 0.3s ease;
+            transition: transform 0.2s ease;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+        }
+
+        .todo-item.completed {
+            background: #f8f9fa;
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff5252;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        <div class="input-section">
+            <input type="text" id="todoInput" placeholder="Add a new task...">
+            <button id="addButton">Add</button>
+        </div>
+        <ul class="todo-list" id="todoList">
+            <!-- Todo items will be added here dynamically -->
+            <li class="todo-item">
+                <span></span>
+                <button class="delete-btn"> Delete </button>
+            </li>
+            <!-- the button for testing todos items in database -->
+            <button class="delete-btn" onclick="showItems()">Show Items</button>
+        </ul>
+        <!-- <ul>
+            {% for todo in todos %}
+                <li>{{ todo.title }}</li> <!-- Assuming 'name' is a field in your TodoItem model -->
+            {% empty %}
+                <li>No todos available.</li>
+            {% endfor %}
+        </ul> -->
+    </div>
+
+    <script>
+        // check if the todos items is successfully transfered in there
+        document.getElementById('showItemsBtn').addEventListener('click', showItems);
+
+        function showItems(todos) {
+            console.log(todos)
+            console.log("successful trigger")
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const todoInput = document.getElementById('todoInput');
+            const addButton = document.getElementById('addButton');
+            const todoList = document.getElementById('todoList');
+
+            function createTodoItem(text) {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                
+                const span = document.createElement('span');
+                span.textContent = text;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = 'Delete';
+                
+                deleteBtn.addEventListener('click', () => {
+                    li.remove();
+                });
+
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+
+                li.addEventListener('click', (e) => {
+                    if (e.target !== deleteBtn) {
+                        li.classList.toggle('completed');
+                    }
+                });
+
+                return li;
+            }
+
+            addButton.addEventListener('click', () => {
+                const text = todoInput.value.trim();
+                if (text) {
+                    const newTodo = createTodoItem(text);
+                    todoList.appendChild(newTodo);
+                    todoInput.value = '';
+                }
+            });
+
+            todoInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
