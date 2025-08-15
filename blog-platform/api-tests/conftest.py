@@ -3,6 +3,7 @@ import requests
 import time
 from typing import Dict, Any
 
+""" Not every function will be called when a test run, only being run when the function is called """
 @pytest.fixture(scope="session")
 def base_url():
     """ Base URL for the API """

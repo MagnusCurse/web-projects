@@ -68,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User register(RegisterRequest registerRequest) {
         // Check if user already exists
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new RuntimeException("User with this email already exists");
+            throw new IllegalStateException("User with this email already exists");
         }
 
         // Use the email prefix as the default name
