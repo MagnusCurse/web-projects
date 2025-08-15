@@ -1,0 +1,9 @@
+# The requirements.txt file lists all the Python packages (libraries) that your project needs to run. It's like a shopping list for Python dependencies.
+# Instead of manually installing each package, you can install everything at once: pip install -r requirements.txt
+pytest==7.4.3  #  main testing framework
+requests==2.31.0  #  HTTP library for API calls
+pytest-html==4.1.1  #  Generate HTML test report 
+pytest-xdist==3.3.1  #  Run test in parallel
+pytest-cov==4.1.0  #  Code coverage reporting
+pytest-mock==3.12.0  #  Mocking capabilities
+jsonschema==4.20.0  #  JSON validation
