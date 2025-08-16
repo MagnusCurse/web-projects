@@ -3,11 +3,15 @@ import time
 
 class TestPosts:
     """ Test posts endpoints """
-    def validate_post_structure(self, post):
+    def validate_post_structure(self, posts):
         required_fields = ["id", "title", "content", "author", "createdAt"]
-        
-        for field in required_fields:
-            assert field in post, f"Missing required field: {field}"
+
+        # Validate only the first 10 posts
+        posts_to_validate = posts[:10]  # This takes first 10 or all if less than 10
+
+        for post in posts_to_validate:
+            for field in required_fields:
+                assert field in post, f"Missing required field: {field}"
         
 
     def test_get_all_posts(self, base_url):
@@ -20,11 +24,11 @@ class TestPosts:
         
         posts = response.json()
         assert posts is not None
-        # Validate only the first 10 posts
-        posts_to_validate = posts[:10]  # This takes first 10 or all if less than 10
+        
+        self.validate_post_structure(posts)
+    
 
-        for post in posts_to_validate:
-            self.validate_post_structure(post)
+    
 
 
 
