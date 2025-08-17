@@ -24,7 +24,16 @@ def auth_token(base_url):
     # If the assertion fails, it displays a custom error message: f"Failed to register user: {response.text}"
     assert response.status_code == 200, f"Failed to register a test user: {response.text}"
 
+    # Extract the token from the response
+    token = response.json().get("token")  
+    
+    # Make sure we got a token
+    assert token is not None, "No token received from registration"
+    
+    return token
 
+
+# scope="session" = Runs once when pytest starts
 @pytest.fixture(scope="session")
 def test_data(base_url, auth_token):
     """ Create the test data (catagory and tags) for test """
@@ -49,8 +58,9 @@ def test_data(base_url, auth_token):
     }
 
 
+# scope="function" = Runs once per test function -
 @pytest.fixture(scope="function")
-def clean_test_data(base_url, auth_token, test_data):
+def clean_test_data_function(base_url, auth_token, test_data):
     """ Clean the data that fixture created after each test """
     yield # This runs the test
 
@@ -62,6 +72,26 @@ def clean_test_data(base_url, auth_token, test_data):
         for post in posts:
             if "Test Post" in post.get("title", ""):
                 requests.delete(f"{base_url}/posts/{post['id']}", headers=headers)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def clean_test_data_session(base_url, auth_token, test_data):
+    """
+    Cleans up session-scoped data (category and tags) at the end of the test session.
+    """
+    yield  # This allows the test session to run first
+
+    # Cleanup: Get headers with the auth token
+    headers = {"Authorization": f"Bearer {auth_token}"}
+
+    # Delete the test category
+    category_id = test_data["category_id"]
+    requests.delete(f"{base_url}/categories/{category_id}", headers=headers)
+
+    # Delete the test tags
+    tag_ids = test_data["tag_ids"]
+    for tag_id in tag_ids:
+        requests.delete(f"{base_url}/tags/{tag_id}", headers=headers)
 
 
 def pytest_configure(config):
